@@ -53,10 +53,19 @@ func AllTasks() ([]Task, error) {
 				Value: string(v),
 			})
 		}
-
+		return nil
 	})
+	if err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
 
-	return tasks
+func DeleteTask(key int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(taskBucket)
+		return b.Delete(itob(key))
+	})
 }
 
 func itob(v int) []byte {
